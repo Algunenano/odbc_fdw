@@ -19,6 +19,7 @@ matrix:
     - env: PGSQL_VERSION=9.5
     - env: PGSQL_VERSION=9.6
     - env: PGSQL_VERSION=10
+    - env: PGSQL_VERSION=11
 
 addons:
   apt:
