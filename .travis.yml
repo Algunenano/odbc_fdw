@@ -14,12 +14,11 @@ env:
     - HADOOP_HOME=/opt/hadoop-2.7.5
     - TDSVER=7.0
 
-matrix:
-  include:
-    - env: PGSQL_VERSION=9.5
-    - env: PGSQL_VERSION=9.6
-    - env: PGSQL_VERSION=10
-    - env: PGSQL_VERSION=11
+  matrix:
+    - POSTGRESQL_VERSION="9.5"
+    - POSTGRESQL_VERSION="9.6"
+    - POSTGRESQL_VERSION="10"
+    - POSTGRESQL_VERSION="11"
 
 addons:
   apt:
@@ -37,14 +36,20 @@ addons:
 
 
 before_install:
+  - sudo service postgresql stop;
+  - sudo apt-get remove postgresql* -y
+  - sudo apt-get install -y --allow-unauthenticated --no-install-recommends --no-install-suggests postgresql-$POSTGRESQL_VERSION postgresql-client-$POSTGRESQL_VERSION postgresql-server-dev-$POSTGRESQL_VERSION postgresql-common
+  - sudo pg_dropcluster --stop $POSTGRESQL_VERSION main
+  - sudo rm -rf /etc/postgresql/$POSTGRESQL_VERSION /var/lib/postgresql/$POSTGRESQL_VERSION
+  - sudo pg_createcluster -u postgres --locale C $POSTGRESQL_VERSION main -- -A trust
+  - sudo /etc/init.d/postgresql start $POSTGRESQL_VERSION || sudo journalctl -xe
+
   # Decrypt config files
     # mysql.config, sqlserver.config, hive.config and postgres.config have been compressed into one file to ease encryption/decryption.
   - openssl aes-256-cbc -K $encrypted_09e387fba547_key -iv $encrypted_09e387fba547_iv -in $TRAVIS_BUILD_DIR/test/config/configs.tar.enc -out $TRAVIS_BUILD_DIR/test/config/configs.tar -d
 
   # Extract config files
   - tar xvf $TRAVIS_BUILD_DIR/test/config/configs.tar -C $TRAVIS_BUILD_DIR/test/config
-    # Install PostgreSQL (no sudos in script)
-  - sudo bash $TRAVIS_BUILD_DIR/test/scripts/ci/install_postgres.sh
   # Install Hive (sudos in script as needed)
   - bash $TRAVIS_BUILD_DIR/test/scripts/ci/install_hive.sh
   # ODBC installation ini file
