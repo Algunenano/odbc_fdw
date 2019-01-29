@@ -3,14 +3,14 @@
  *                foreign-data wrapper for ODBC
  *
  * Copyright (c) 2011, PostgreSQL Global Development Group
- * Copyright (c) 2016, 2017, 2018, CARTO
+ * Copyright (c) 2016, 2017, 2018, 2019 CARTO
  *
  * This software is released under the PostgreSQL Licence
  *
  * Original author: Zheng Yang <zhengyang4k@gmail.com>
  *
  * IDENTIFICATION
- *                odbc_fdw/odbc_fdw--0.2.0.sql
+ *                odbc_fdw/odbc_fdw--0.3.1.sql
  *
  *-------------------------------------------------------------------------
  */

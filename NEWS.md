@@ -1,7 +1,7 @@
 # Changelog
 
-## 0.3.1
-Released 2019-01-19
+## 0.4.0
+Released 2019-01-29
 
 Changes:
 - Changes in the testing infraestructure (https://github.com/CartoDB/odbc_fdw/pull/80, https://github.com/CartoDB/odbc_fdw/pull/81, https://github.com/CartoDB/odbc_fdw/pull/84, https://github.com/CartoDB/odbc_fdw/pull/87, https://github.com/CartoDB/odbc_fdw/pull/93).
