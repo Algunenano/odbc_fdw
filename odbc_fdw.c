@@ -55,8 +55,10 @@
 
 #if PG_VERSION_NUM < 120000
 #include "access/heapam.h"
+#define table_open heap_open
+#define table_close heap_close
 #else
-#include "access/relation.h"
+#include "access/table.h"
 #endif
 
 /* TupleDescAttr was backported into 9.5.9 and 9.6.5 but we support any 9.5.X */
@@ -1362,11 +1364,7 @@ odbcBeginForeignScan(ForeignScanState *node, int eflags)
 	}
 
 	/* Fetch the table column info */
-#if PG_VERSION_NUM < 120000
-	rel = heap_open(RelationGetRelid(node->ss.ss_currentRelation), AccessShareLock);
-#else
-	rel = relation_open(RelationGetRelid(node->ss.ss_currentRelation), AccessShareLock);
-#endif
+	rel = table_open(RelationGetRelid(node->ss.ss_currentRelation), AccessShareLock);
 	num_of_columns = rel->rd_att->natts;
 	columns = (StringInfoData *) palloc(sizeof(StringInfoData) * num_of_columns);
 	initStringInfo(&col_str);
@@ -1401,11 +1399,7 @@ odbcBeginForeignScan(ForeignScanState *node, int eflags)
 			columns[i] = col;
 		appendStringInfo(&col_str, i == 0 ? "%s%s%s" : ",%s%s%s", (char *) quote_char.data, columns[i].data, (char *) quote_char.data);
 	}
-#if PG_VERSION_NUM < 120000
-	heap_close(rel, NoLock);
-#else
-	relation_close(rel, NoLock);
-#endif
+	table_close(rel, NoLock);
 	
 	/* See if we've got a qual we can push down */
 	if (node->ss.ps.plan->qual)
